@@ -65,7 +65,11 @@ module Resque
       end
 
       def time_to_scale?
-        (Time.now - Time.parse(Resque.redis.get('last_scaled'))) >=  Resque::Plugins::HerokuAutoscaler::Config.wait_time
+        if last_scaled = Resque.redis.get('last_scaled')
+          (Time.now - Time.parse(last_scaled)) >=  Resque::Plugins::HerokuAutoscaler::Config.wait_time
+        else
+          true
+        end
       end
 
       def log(message)
