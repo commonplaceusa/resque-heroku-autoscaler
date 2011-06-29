@@ -24,12 +24,17 @@ module Resque
 
       def set_workers(number_of_workers)
         if number_of_workers != current_workers
-          heroku_client.ps_scale(Resque::Plugins::HerokuAutoscaler::Config.heroku_app, :type => "worker", :qty => number_of_workers)
+          heroku_client.ps_scale(Resque::Plugins::HerokuAutoscaler::Config.heroku_app, 
+                                 :type => Resque::Plugins::HerokuAutoscaler::Config.process_type, 
+                                 :qty => number_of_workers)
         end
       end
 
       def current_workers
-        heroku_client.ps_scale("commonplace", :type=> "worker", :qty => "+0")
+        # this is hacky, but it doesn't change the amount of workers and it returns the number of workers
+        heroku_client.ps_scale(Resque::Plugins::HerokuAutoscaler::Config.heroku_app, 
+                               :type => Resque::Plugins::HerokuAutoscaler::Config.process_type , 
+                               :qty => "+0")
       end
 
       def heroku_client

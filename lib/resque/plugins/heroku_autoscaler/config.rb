@@ -33,6 +33,11 @@ module Resque
           @wait_time || 60
         end
 
+        attr_writer :process_type
+        def process_type
+          @process_type || "worker"
+        end
+
         def new_worker_count(pending=nil, *payload, &calculate_count)
           if calculate_count
             @new_worker_count = calculate_count
